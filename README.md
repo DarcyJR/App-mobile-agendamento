@@ -1,16 +1,23 @@
-# estoque
+# 📅 App Mobile de Agendamento
 
-A new Flutter project.
+Aplicativo desenvolvido em **Flutter** com o objetivo de permitir o agendamento de tarefas e compromissos. Futuramente, o app contará com **notificações automáticas** para lembrar o usuário dos agendamentos.
 
-## Getting Started
+## 🚀 Funcionalidades
 
-This project is a starting point for a Flutter application.
+- Cadastro de agendamentos com título, data e hora
+- Listagem dos agendamentos futuros
+- Interface limpa e intuitiva
+- Preparado para adicionar notificações locais (em breve)
 
-A few resources to get you started if this is your first Flutter project:
+## 🔧 Tecnologias utilizadas
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- [Flutter](https://flutter.dev/)
+- [Dart](https://dart.dev/)
+- Notificações (em desenvolvimento)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📱 Execução do projeto
+
+1. Certifique-se de ter o Flutter instalado ([veja como](https://docs.flutter.dev/get-started/install))
+2. Clone o repositório:
+   ```bash
+   git clone https://github.com/DarcyJR/App-mobile-agendamento.git
