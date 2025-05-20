@@ -1,0 +1,181 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
+void main() {
+  runApp(ToDoApp());
+}
+
+class ToDoApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Lista de Tarefas com Data e Hora',
+      theme: ThemeData(
+        primarySwatch: Colors.teal,
+      ),
+      home: TaskListPage(),
+    );
+  }
+}
+
+class Task {
+  final String title;
+  final DateTime dateTime;
+
+  Task({required this.title, required this.dateTime});
+}
+
+class TaskListPage extends StatefulWidget {
+  @override
+  _TaskListPageState createState() => _TaskListPageState();
+}
+
+class _TaskListPageState extends State<TaskListPage> {
+  final List<Task> _tasks = [];
+  final TextEditingController _textController = TextEditingController();
+  DateTime? _selectedDate;
+  TimeOfDay? _selectedTime;
+
+  void _addTask() {
+    if (_textController.text.trim().isNotEmpty &&
+        _selectedDate != null &&
+        _selectedTime != null) {
+      final fullDateTime = DateTime(
+        _selectedDate!.year,
+        _selectedDate!.month,
+        _selectedDate!.day,
+        _selectedTime!.hour,
+        _selectedTime!.minute,
+      );
+
+      setState(() {
+        _tasks.add(Task(
+          title: _textController.text.trim(),
+          dateTime: fullDateTime,
+        ));
+        _textController.clear();
+        _selectedDate = null;
+        _selectedTime = null;
+      });
+    }
+  }
+
+  void _removeTask(int index) {
+    setState(() {
+      _tasks.removeAt(index);
+    });
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime today = DateTime.now();
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: today,
+      firstDate: today.subtract(Duration(days: 365)),
+      lastDate: today.add(Duration(days: 365 * 5)),
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedTime = picked;
+      });
+    }
+  }
+
+  String _formatDate(DateTime dateTime) {
+    final formattedDate = DateFormat('dd/MM/yyyy').format(dateTime);
+    final formattedTime = DateFormat('HH:mm').format(dateTime);
+    return '$formattedDate às $formattedTime';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Minhas Tarefas com Data e Hora')),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _textController,
+              decoration: InputDecoration(
+                labelText: 'Digite uma nova tarefa',
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _selectedDate == null
+                        ? 'Nenhuma data selecionada'
+                        : 'Data: ${DateFormat('dd/MM/yyyy').format(_selectedDate!)}',
+                  ),
+                ),
+                TextButton.icon(
+                  icon: Icon(Icons.calendar_today),
+                  label: Text('Selecionar data'),
+                  onPressed: () => _selectDate(context),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _selectedTime == null
+                        ? 'Nenhuma hora selecionada'
+                        : 'Hora: ${_selectedTime!.format(context)}',
+                  ),
+                ),
+                TextButton.icon(
+                  icon: Icon(Icons.access_time),
+                  label: Text('Selecionar hora'),
+                  onPressed: () => _selectTime(context),
+                ),
+              ],
+            ),
+            ElevatedButton(
+              onPressed: _addTask,
+              child: Text('Adicionar Tarefa'),
+            ),
+            SizedBox(height: 20),
+            Expanded(
+              child: _tasks.isEmpty
+                  ? Center(child: Text('Nenhuma tarefa adicionada ainda.'))
+                  : ListView.builder(
+                      itemCount: _tasks.length,
+                      itemBuilder: (context, index) {
+                        final task = _tasks[index];
+                        return Card(
+                          child: ListTile(
+                            title: Text(task.title),
+                            subtitle:
+                                Text('Data: ${_formatDate(task.dateTime)}'),
+                            trailing: IconButton(
+                              icon: Icon(Icons.delete, color: Colors.red),
+                              onPressed: () => _removeTask(index),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
